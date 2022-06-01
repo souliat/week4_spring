@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+
+    <title></title>
+    <style>
+
+    </style>
+
+    <script>
+
+        function writePost() {
+            let username = $('#username').val();
+            let title = $('#title').val();
+            let content = $('#content').val();
+            let password = $('#password').val();
+
+            let data = {
+                "username": username,
+                "title": title,
+                "content": content,
+                "password": password
+            }
+            $.ajax({
+                type: "POST",
+                url: "/api/posts",
+                contentType: "application/json",
+                data: JSON.stringify(data),
+                success: function (response) {
+                    alert("글이 작성되었습니다.");
+                    window.location.href = "/";
+                }
+            });
+        }
+
+    </script>
+</head>
+<body>
+
+    <div class="field">
+        <label class="label"></label>
+        <div class="control">
+            <input class="input" id="username" type="text" placeholder="사용자이름">
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label"></label>
+        <div class="control">
+            <input class="input" id="title" type="text" placeholder="제목">
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label"></label>
+        <div class="control">
+            <textarea class="textarea" id="content" placeholder="내용"></textarea>
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="label"></label>
+        <div class="control">
+            <input class="input" id="password" type="text" placeholder="비밀번호">
+        </div>
+    </div>
+
+    <div class="field is-grouped">
+        <div class="control">
+            <button class="button is-link" onclick="writePost()">글작성하기</button>
+        </div>
+    </div>
+
+    <div>
+        <a href="/index">전체글보기</a>
+    </div>
+
+</body>
+</html>

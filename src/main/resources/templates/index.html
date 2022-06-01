@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+
+  <title></title>
+  <style>
+    .table {
+      width: 600px;
+      margin: 50px auto;
+    }
+
+    .write-post {
+      width: 600px;
+      margin: 10px auto;
+    }
+
+    .login {
+      float: right;
+      left: 100px;
+    }
+  </style>
+
+  <script>
+    $(document).ready(function () {
+      // HTML
+      getPosts();
+    })
+
+    function getPosts() {
+      $('#post-preview').empty();
+      $.ajax({
+        type: 'GET',
+        url: '/api/posts',
+        success: function (response) {
+          for (let i = 0; i < response.length; i++) {
+            let post = response[i];
+            let id = post.id;
+            let title = post.title;
+            let username = post.username;
+            let createdAt = post.createdAt;
+
+            let tempHtml = `<tr>
+                                <th scope="row">${id}</th>
+                                <td>
+                                    <a href="/api/detail/${id}">${title}</a>
+                                </td>
+                                <td>${username}</td>
+                                <td>${createdAt}</td>
+                            </tr>`;
+            $('#post-preview').append(tempHtml);
+          }
+
+        }
+      })
+    }
+
+  </script>
+</head>
+<body>
+  <div class="login">
+    <span th:if="${loginStatus}" th:text="|${username} 님 반갑습니다.|"></span>
+    <button th:if="${loginStatus}" type="button" class="btn btn-dark" onclick="location.href='/user/logout'">로그아웃</button>
+
+    <button th:if="!${loginStatus}" type="button" class="btn btn-dark" onclick="location.href='/user/login'">로그인하기</button>
+  </div>
+
+  <div class="table">
+    <table class="table">
+      <thead>
+      <tr>
+        <th scope="col">No</th>
+        <th scope="col">Title</th>
+        <th scope="col">Username</th>
+        <th scope="col">CreatedAt</th>
+      </tr>
+      </thead>
+      <tbody id="post-preview">
+      <tr>
+        <th scope="row">1</th>
+        <td>Mark</td>
+        <td>Otto</td>
+        <td>@mdo</td>
+      </tr>
+      </tbody>
+    </table>
+
+    <div class="write-post">
+      <a href="/write">글쓰러가기</a>
+    </div>
+  </div>
+</body>
+</html>
