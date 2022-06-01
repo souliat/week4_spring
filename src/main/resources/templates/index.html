@@ -55,7 +55,6 @@
                             </tr>`;
             $('#post-preview').append(tempHtml);
           }
-
         }
       })
     }
@@ -66,7 +65,6 @@
   <div class="login">
     <span th:if="${loginStatus}" th:text="|${username} 님 반갑습니다.|"></span>
     <button th:if="${loginStatus}" type="button" class="btn btn-dark" onclick="location.href='/user/logout'">로그아웃</button>
-
     <button th:if="!${loginStatus}" type="button" class="btn btn-dark" onclick="location.href='/user/login'">로그인하기</button>
   </div>
 
@@ -91,7 +89,7 @@
     </table>
 
     <div class="write-post">
-      <a href="/write">글쓰러가기</a>
+      <a href="/write">새글쓰기</a>
     </div>
   </div>
 </body>

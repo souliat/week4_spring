@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
 
@@ -8,13 +8,16 @@
 
     <title></title>
     <style>
-
+        .input-field {
+            width: 600px;
+            margin: 100px auto;
+        }
     </style>
 
-    <script>
+    <script th:inline="javascript">
 
         function writePost() {
-            let username = $('#username').val();
+            let username = [[${username}]]
             let title = $('#title').val();
             let content = $('#content').val();
             let password = $('#password').val();
@@ -40,11 +43,11 @@
     </script>
 </head>
 <body>
-
+<div class="input-field">
     <div class="field">
         <label class="label"></label>
         <div class="control">
-            <input class="input" id="username" type="text" placeholder="사용자이름">
+            <input class="input" id="username" type="text" th:value="${username}" readonly>
         </div>
     </div>
 
@@ -71,13 +74,13 @@
 
     <div class="field is-grouped">
         <div class="control">
-            <button class="button is-link" onclick="writePost()">글작성하기</button>
+            <button class="button is-link" onclick="writePost()">작성하기</button>
         </div>
     </div>
 
     <div>
-        <a href="/index">전체글보기</a>
+        <a href="/index">전체글</a>
     </div>
-
+</div>
 </body>
 </html>

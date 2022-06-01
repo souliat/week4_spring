@@ -19,6 +19,12 @@
             margin: 10px auto;
         }
 
+        #deletearea {
+            display: none;
+            width: 600px;
+            margin: 10px auto;
+        }
+
         #info {
             width: 600px;
             margin: 10px auto;
@@ -40,6 +46,9 @@
 
         .icon-end-edit {
             display: none;
+        }
+        .revise-delete-buttons {
+            margin: 15px 0 0 0;
         }
 
 
@@ -151,7 +160,7 @@
             });
         }
 
-        // 저장된 댓글을 불러오기 위한 ajax call
+        // 전체 댓글 조회해서 뿌려주기
         function get_comments(postNum) {
             $("#post-box").empty()
             $.ajax({
@@ -159,14 +168,16 @@
                 url: `/api/comments/${postNum}`,
                 data: {},
                 success: function (response) {
-
                         for (let i = 0; i < response.length; i++) {
-                            let comment = response[i]
+                            console.log(response[i]);
+                            let comment = response[i];
                             let id = comment.id;
                             let username = comment.username;
                             let content = comment.content;
                             let postNum = comment.postNum;
                             let createdAt = comment.createdAt;
+                            let likeCount = comment.likeCount;
+                            let classHeart = comment.likeByMe ? "fa-heart" : "fa-heart-o";
 
                             let html_temp = `<div class="box" id="${id}">
                                                 <article class="media">
@@ -186,8 +197,8 @@
                                                         <nav class="level is-mobile">
                                                             <div class="level-left">
                                                                 <a class="level-item is-sparta" aria-label="heart" onclick="toggle_like('${id}')">
-                                                                    <span class="icon is-small"><i class="fa fa-heart-o" aria-hidden="true"></i></span>&nbsp;
-                                                                    <span class="like-num">2.7k</span>
+                                                                    <span class="icon is-small"><i class="fa ${classHeart}" aria-hidden="true"></i></span>&nbsp;
+                                                                    <span class="like-num">${likeCount}</span>
                                                                 </a>
                                                             </div>
                                                         </nav>
@@ -221,7 +232,15 @@
             $('#editarea').hide();
         }
 
-        function checkPassword() {
+        function showPostDelete() {
+            $('#deletearea').show();
+        }
+
+        function hidePostDelete() {
+            $('#deletearea').hide();
+        }
+
+        function checkEditPassword() {
             let id = [[${post.id}]];
             let password = $('#password1').val();
 
@@ -232,7 +251,27 @@
                 success: function (result) {
                     if (result === true) {
                         alert("비밀번호가 일치합니다.");
-                        $('#submitBtn').attr('disabled', false);
+                        $('#submitBtn1').attr('disabled', false);
+
+                    } else {
+                        alert("비밀번호가 일치하지 않습니다.");
+                    }
+                }
+            })
+        }
+
+        function checkDeletePassword() {
+            let id = [[${post.id}]];
+            let password = $('#password2').val();
+
+            $.ajax({
+                type: 'GET',
+                url: '/api/posts/check',
+                data: {id, password},
+                success: function (result) {
+                    if (result === true) {
+                        alert("비밀번호가 일치합니다.");
+                        $('#submitBtn2').attr('disabled', false);
 
                     } else {
                         alert("비밀번호가 일치하지 않습니다.");
@@ -261,7 +300,26 @@
             });
         }
 
+        function submitPostDelete() {
+            let id = [[${post.id}]];
+
+            $.ajax({
+                type: "DELETE",
+                url: `/api/posts/${id}`,
+                contentType: "application/json",
+                success: function (response) {
+                    alert("글이 삭제되었습니다");
+                    window.location.href="/";
+                }
+            });
+        }
+
         function toggle_like(id) {
+            let loginUser = [[${username}]];
+            if (!loginUser) {
+                alert("로그인 후 좋아요를 누를 수 있습니다.");
+                return;
+            }
             let $a_like = $(`#${id} a[aria-label='heart']`);
             let $i_like = $a_like.find("i");
             let username = [[${username}]];
@@ -306,19 +364,14 @@
     <h3 th:text="|작성일자 : ${post.createdAt}|" th:id="createdAt"></h3>
     <h3 th:text="|수정일자 : ${post.modifiedAt}|" th:id="modifiedAt"></h3>
     <!--    <h1 th:text="${post.password}"></h1>-->
-    <div>
-        <button class="button is-dark" onclick="showPostEdit()">수정하기</button>
+    <div class="revise-delete-buttons">
+        <!-- 글을 작성한 username과 현재 로그인해있는 username이 같을 경우만 수정할 수 있도록 보여줌.-->
+        <button th:if="${username} == ${post.username}" class="button is-primary" onclick="showPostEdit()">수정하기</button>
+        <button th:if="${username} == ${post.username}" class="button is-dark" onclick="showPostDelete()">삭제하기</button>
     </div>
 </div>
 
 <div id="editarea">
-<!--    <div class="field">-->
-<!--        <label class="label">사용자명</label>-->
-<!--        <div class="control">-->
-<!--            <input class="input" id="username1" type="text" placeholder="사용자명">-->
-<!--        </div>-->
-<!--    </div>-->
-
     <div class=" field">
         <label class="label">제목</label>
         <div class="control">
@@ -337,13 +390,27 @@
         <label class="label">비밀번호</label>
         <div class="control">
             <input class="input" id="password1" type="text" placeholder="비밀번호">
-            <button class=" button is-dark" onclick="checkPassword()">비밀번호 확인</button>
+            <button class=" button is-dark" onclick="checkEditPassword()">비밀번호 확인</button>
         </div>
     </div>
 
-    <button class="button is-dark" id="submitBtn" onclick="submitPostEdit()" disabled>수정하기</button>
+    <button class="button is-dark" id="submitBtn1" onclick="submitPostEdit()" disabled>수정하기</button>
     <!--        <input type="submit" class="btn btn-outline-primary mr-2" value="disabled>-->
     <button class="button is-link" onclick="hidePostEdit()">취소</button>
+</div>
+
+<div id="deletearea">
+    <div class=" field">
+        <label class="label">비밀번호</label>
+        <div class="control">
+            <input class="input" id="password2" type="text" placeholder="비밀번호">
+            <button class=" button is-dark" onclick="checkDeletePassword()">비밀번호 확인</button>
+        </div>
+    </div>
+
+    <button class="button is-dark" id="submitBtn2" onclick="submitPostDelete()" disabled>삭제하기</button>
+    <!--        <input type="submit" class="btn btn-outline-primary mr-2" value="disabled>-->
+    <button class="button is-link" onclick="hidePostDelete()">취소</button>
 </div>
 
 <!--글쓰는 섹션-->
@@ -399,8 +466,7 @@
                 </article>
             </div>
         </div>
-        <button class="modal-close is-large" aria-label="close"
-                onclick='$("#modal-post").removeClass("is-active")'></button> <!-- X 버튼 눌렀을 때 -->
+        <button class="modal-close is-large" aria-label="close" onclick='$("#modal-post").removeClass("is-active")'></button> <!-- X 버튼 눌렀을 때 -->
     </div>
 </section>
 

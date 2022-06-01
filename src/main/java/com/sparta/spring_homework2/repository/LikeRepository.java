@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface LikeRepository extends JpaRepository<Like, Long> {
     Long countByCommentId(Long commentId);
+    boolean existsByUsernameAndCommentId(String username, Long commentId);
+
+    void deleteByCommentId(Long commentId);
 }

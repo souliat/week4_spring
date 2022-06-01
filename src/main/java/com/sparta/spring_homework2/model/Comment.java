@@ -4,11 +4,13 @@ import com.sparta.spring_homework2.dto.CommentRequestDto;
 import com.sparta.spring_homework2.dto.CommentUpdateRequestDto;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.*;
 
 @NoArgsConstructor
 @Getter
+@Setter
 @Entity
 public class Comment extends Timestamped{
 
@@ -25,6 +27,12 @@ public class Comment extends Timestamped{
     @Column(nullable = false)
     private Long postNum;
 
+    @Column
+    private Long likeCount;
+
+    @Column
+    private boolean likeByMe;
+
 
     public Comment(CommentRequestDto requestDto) {
         this.username = requestDto.getUsername();
@@ -33,6 +41,7 @@ public class Comment extends Timestamped{
     }
 
     public void update(CommentUpdateRequestDto requestDto) {
+
         this.content = requestDto.getContent();
     }
 

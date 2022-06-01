@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -32,7 +33,8 @@ public class PostController {
 
 
     @GetMapping("/write")
-    public String writeView() {
+    public String writeView(Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
+        model.addAttribute("username", userDetails.getUsername());
         return "write";
     }
 
@@ -78,6 +80,7 @@ public class PostController {
     @DeleteMapping("/api/posts/{id}")
     @ResponseBody
     public Long deletePosts(@PathVariable Long id) {
+        System.out.println(id);
         postRepository.deleteById(id);
         return id;
     }

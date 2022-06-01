@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class LikeController {
 
     private final LikeService likeService;
-    private final LikeRepository likeRepository;
 
     @PostMapping("/api/heart/update")
     @ResponseBody
