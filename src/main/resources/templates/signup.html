@@ -7,8 +7,10 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <link rel="preconnect" href="https://fonts.gstatic.com">
   <link href="https://fonts.googleapis.com/css2?family=Nanum+Gothic&display=swap" rel="stylesheet">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <link rel="stylesheet" type="text/css" href="/css/style.css">
   <meta charset="UTF-8">
+
   <title>회원가입 페이지</title>
   <script>
     function onclickAdmin() {
@@ -24,28 +26,108 @@
         box.style.display = "none";
       }
     }
+
+    function signup() {
+      let username = $("#username").val();
+      let password = $("#password").val();
+      let password2 = $("#password2").val();
+      let email = $("#email").val();
+      let admin = $("#admin-check").is(":checked");
+      let adminToken = $("#admin-token").val();
+      console.log(username, password, password2, email, admin, adminToken)
+
+      if (username == "") {
+        alert("아이디를 입력해주세요")
+        $("#username").focus();
+        return;
+      } else if(!is_nickname(username)) {
+        alert("아이디의 형식을 확인해주세요. 최소 3자이상, 알파벳 대소문자(a~z, A~Z), 숫자(0~9) 가능")
+        return;
+      }
+
+      if (password == "") {
+        alert("비밀번호를 입력해주세요")
+        $("#password").focus()
+        return;
+      } else if (!is_password(password)) {
+        alert("비밀번호는 최소4자 이상이어야 합니다.")
+        $("#input-password").focus()
+        return;
+      } else if(password.search(username) > -1) {
+        alert("비밀번호에 닉네임과 같은 값이 포함되어 불가합니다.")
+        return;
+      }
+
+      if (password2 == "") {
+        alert("비밀번호 확인칸을 입력해주세요")
+        $("#password2").focus()
+        return;
+      } else if (password2 != password) {
+        alert("비밀번호가 일치하지 않습니다.")
+        $("#password2").focus()
+        return;
+      }
+
+      if (email == "") {
+        alert("이메일을 입력해주세요")
+        $("#email").focus()
+        return;
+      }
+
+      $.ajax({
+        type: "POST",
+        url: "/user/signup",
+        data: {
+          username: username,
+          password: password,
+          email: email,
+          admin: admin,
+          adminToken: adminToken
+        },
+        success: function (response) {
+          alert("회원가입을 축하드립니다!")
+          window.location.replace("/user/login")
+        }
+      });
+    }
+
+    // id 정규 표현식
+    function is_nickname(asValue) {
+      var regExp = /^[-a-zA-Z0-9]{3,}$/;
+      return regExp.test(asValue);
+    }
+
+    // pw 정규 표현식
+    function is_password(asValue) {
+      var regExp = /^[a-zA-Z0-9]{4,}$/;
+      return regExp.test(asValue);
+    }
+
   </script>
 </head>
 <body>
-<div id="login-form">
-  <div id="login-title">회원가입을 합시다,,,!</div>
+  <div id="login-form">
+    <div id="login-title">회원가입을 합시다,,,!</div>
 
-  <form action="/user/signup" method="post">
-    <div class="login-id-label">Username</div>
-    <input type="text" name="username" placeholder="Username" class="login-input-box">
+<!--  <form action="/user/signup" method="post">-->
+    <div class="login-id-label">Nickname</div>
+    <input type="text" id="username" placeholder="Username" class="login-input-box">
 
     <div class="login-id-label">Password</div>
-    <input type="password" name="password" class="login-input-box">
+    <input type="password" id="password" placeholder="Password"class="login-input-box">
+
+    <div class="login-id-label">Password check</div>
+    <input type="password" id="password2" placeholder="Password Check"class="login-input-box">
 
     <div class="login-id-label">E-mail</div>
-    <input type="text" name="email" placeholder="E-mail" class="login-input-box">
+    <input type="text" id="email" placeholder="E-mail" class="login-input-box">
 
     <div>
       <input id="admin-check" type="checkbox" name="admin" onclick="onclickAdmin()" style="margin-top: 40px;">관리자
       <input id="admin-token" type="password" name="adminToken" placeholder="관리자 암호" class="login-input-box" style="display:none">
     </div>
-    <button id="login-id-submit">회원 가입</button>
-  </form>
-</div>
+    <button type="button" id="login-id-submit" onclick="signup()">회원 가입</button>
+  <!--  </form>-->
+  </div>
 </body>
 </html>
