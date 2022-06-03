@@ -16,9 +16,11 @@ public class LikeController {
 
     private final LikeService likeService;
 
+    // 좋아요 갯수 업데이트
     @PostMapping("/api/heart/update")
     @ResponseBody
     public Long updateLike(@RequestBody LikeRequestDto requestDto) {
+
         return likeService.update(requestDto);
     }
 }

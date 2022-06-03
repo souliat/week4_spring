@@ -13,6 +13,6 @@ public class CommentRequestDto {
     private String username;
     private String content;
     private Long postNum;
-    private Long likeCount;
-    private boolean likeByMe;
+//    private Long likeCount;
+//    private boolean likeByMe;
 }

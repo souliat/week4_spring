@@ -43,6 +43,7 @@ public class PostController {
         return "index";
     }
 
+    // 전체 게시글 조회
     @GetMapping("/api/posts")
     @ResponseBody
     public List<Post> getTotalPosts() {
@@ -50,6 +51,7 @@ public class PostController {
         return postRepository.findAllByOrderByCreatedAtDesc();
     }
 
+    // 상세 게시글 조회 및 상세 페이지 이동
     @GetMapping("/api/detail/{id}")
     public String getDetailPosts(@PathVariable Long id, Model model, @AuthenticationPrincipal UserDetailsImpl userDetails) {
 
@@ -62,7 +64,7 @@ public class PostController {
         model.addAttribute("post", post);
         return "detail";
     }
-
+    // 게시글 작성
     @PostMapping("/api/posts")
     @ResponseBody
     public Post savePosts(@RequestBody PostRequestDto requestDto) {
@@ -70,6 +72,7 @@ public class PostController {
         return postRepository.save(post);
     }
 
+    // 게시글 수정
     @PutMapping("/api/posts/{id}")
     @ResponseBody
     public Long updatePosts(@PathVariable Long id, @RequestBody PostUpdateRequestDto updateRequestDto) {
@@ -77,14 +80,15 @@ public class PostController {
         return id;
     }
 
+    // 게시글 삭제
     @DeleteMapping("/api/posts/{id}")
     @ResponseBody
     public Long deletePosts(@PathVariable Long id) {
-        System.out.println(id);
         postRepository.deleteById(id);
         return id;
     }
 
+    // 수정, 또는 삭제 시 비밀번호 사전 체크
     @GetMapping("/api/posts/check")
     @ResponseBody
     public boolean checkPassword(@RequestParam("id") Long id, @RequestParam("password") String password) {

@@ -12,8 +12,6 @@ import javax.transaction.Transactional;
 @RequiredArgsConstructor
 @Service
 public class LikeService {
-
-
     private final LikeRepository likeRepository;
     @Transactional
     public Long update(LikeRequestDto requestDto) {
